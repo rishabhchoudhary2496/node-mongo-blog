@@ -32,20 +32,16 @@ class CommentController {
   // @route   POST /comment
   // @access  Private
   static postComment = async (req, res) => {
-    const { commentText, userId, blogId } = req.body
-    const { error } = this.validateComment({ commentText, userId, blogId })
+    const { commentText, blogId } = req.body
+    const { error } = this.validateComment({ commentText, blogId })
     if (error) return res.status(400).json({ error: error.details[0].message })
-
-    const user = await this.User.findOne({ _id: userId })
-    if (!user)
-      return res.status(400).json({ message: 'user not have a account' })
 
     const blog = await this.Blog.findOne({ _id: blogId })
     if (!blog) return res.status(404).json({ message: "Blog doesn't exist" })
 
     const comment = new this.Comment({
       commentText: commentText,
-      userId: userId,
+      userId: req.user._id,
       blogId: blogId,
     })
 
@@ -63,7 +59,15 @@ class CommentController {
     const { error } = this.validateCommentText({ commentText })
     if (error) return res.status(400).json({ error: error.details[0].message })
 
-    const comment = await this.Comment.findOneAndUpdate(
+    let comment = await this.Comment.findOne({ _id: id })
+    if (!comment)
+      return res.status(200).json({ message: 'Comment with this id not found' })
+
+    if (comment.userId !== req.user._id) {
+      return req.status(403).json({ message: "You can't update this comment" })
+    }
+
+    comment = await this.Comment.findOneAndUpdate(
       { _id: id },
       {
         $set: {
@@ -72,8 +76,7 @@ class CommentController {
       },
       { new: true }
     )
-    if (!comment)
-      return res.status(200).json({ message: 'Comment with this id not found' })
+
     res.status(200).json(comment)
   }
 
@@ -85,6 +88,9 @@ class CommentController {
     const comment = await this.Comment.findOneAndDelete({ _id: id })
     if (!comment)
       return res.status(200).json({ message: 'Comment with this id not found' })
+    if (comment.userId !== req.user._id) {
+      return req.status(403).json({ message: "You can't delete this comment" })
+    }
     res.status(200).json({ comment })
   }
 }

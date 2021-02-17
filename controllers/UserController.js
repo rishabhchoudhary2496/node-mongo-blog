@@ -12,7 +12,7 @@ class UserController {
   // @desc    login
   // @route   POST /login
   // @access  Public
-  static login = async (req, res) => {
+  static login = async (req, res, next) => {
     this.passport.authenticate('local', function (error, user, info) {
       if (error) {
         console.log('error', error)

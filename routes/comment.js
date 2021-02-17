@@ -9,6 +9,7 @@ wagner.invoke(
     User,
     validateComment,
     validateCommentText,
+    isAuth,
     CommentController
   ) => {
     CommentController.setData(
@@ -18,10 +19,10 @@ wagner.invoke(
       validateComment,
       validateCommentText
     )
-    router.post('/', CommentController.postComment)
+    router.post('/', isAuth, CommentController.postComment)
     router.get('/:blogId', CommentController.getBlogComments)
-    router.put('/:id', CommentController.updateComment)
-    router.delete('/:id', CommentController.deleteComment)
+    router.put('/:id', isAuth, CommentController.updateComment)
+    router.delete('/:id', isAuth, CommentController.deleteComment)
   }
 )
 

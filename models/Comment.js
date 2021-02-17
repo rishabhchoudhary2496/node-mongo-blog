@@ -34,7 +34,6 @@ const Comment = mongoose.model('Comment', commentSchema)
 const validateComment = function (comment) {
   const schema = Joi.object({
     commentText: Joi.string().required(),
-    userId: Joi.objectId().required(),
     blogId: Joi.objectId().required(),
   })
   return schema.validate(comment)
@@ -50,7 +49,7 @@ const validateCommentText = function (commentText) {
 const validateReply = function (reply) {
   const schema = Joi.object({
     replyText: Joi.string().required(),
-    userId: Joi.objectId().required(),
+    commentId: Joi.string().required(),
   })
   return schema.validate(reply)
 }

@@ -68,7 +68,7 @@ class UserController {
         message: 'user already exists!',
       })
 
-    user = new User({
+    user = new this.User({
       name: name,
       email: email,
       password: password,

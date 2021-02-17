@@ -14,7 +14,7 @@ const replySchema = mongoose.Schema({
 })
 
 const commentSchema = mongoose.Schema({
-  comment: {
+  commentText: {
     type: String,
     required: true,
   },
@@ -52,7 +52,7 @@ const blogSchema = mongoose.Schema({
     required: true,
     default: Date.now,
   },
-  comment: commentSchema,
+  comments: [commentSchema],
 })
 
 const Blog = mongoose.model('Blog', blogSchema)
@@ -68,7 +68,7 @@ const validateBlog = function (blog) {
 
 const validateComment = function (comment) {
   const schema = Joi.object({
-    comment: Joi.string().required(),
+    commentText: Joi.string().required(),
     userId: Joi.objectId().required(),
   })
   return schema.validate(comment)

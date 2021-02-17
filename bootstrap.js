@@ -1,6 +1,7 @@
 const joi = require('joi')
 const passport = require('passport')
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
 const LocalStrategy = require('passport-local').Strategy
 const {
   Blog,
@@ -16,6 +17,7 @@ const isAuth = require('./utils/middlewares')
 
 const UserController = require('./controllers/UserController')
 const BlogController = require('./controllers/BlogController')
+const CommentController = require('./controllers/CommentController')
 
 module.exports = function (wagner) {
   wagner.factory('joi', function () {
@@ -80,5 +82,13 @@ module.exports = function (wagner) {
 
   wagner.factory('BlogController', function () {
     return BlogController
+  })
+
+  wagner.factory('CommentController', function () {
+    return CommentController
+  })
+
+  wagner.factory('mongoose', function () {
+    return mongoose
   })
 }

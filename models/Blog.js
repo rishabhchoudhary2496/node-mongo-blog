@@ -2,29 +2,6 @@ const mongoose = require('mongoose')
 const Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 
-const replySchema = mongoose.Schema({
-  reply: {
-    type: String,
-    require: true,
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-})
-
-const commentSchema = mongoose.Schema({
-  commentText: {
-    type: String,
-    required: true,
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  replies: [replySchema],
-})
-
 const blogSchema = mongoose.Schema({
   title: {
     type: String,
@@ -52,7 +29,6 @@ const blogSchema = mongoose.Schema({
     required: true,
     default: Date.now,
   },
-  comments: [commentSchema],
 })
 
 const Blog = mongoose.model('Blog', blogSchema)
@@ -66,25 +42,7 @@ const validateBlog = function (blog) {
   return schema.validate(blog)
 }
 
-const validateComment = function (comment) {
-  const schema = Joi.object({
-    commentText: Joi.string().required(),
-    userId: Joi.objectId().required(),
-  })
-  return schema.validate(comment)
-}
-
-const validateReply = function (reply) {
-  const schema = Joi.object({
-    reply: Joi.string().required(),
-    userId: Joi.objectId().required(),
-  })
-  return schema.validate(reply)
-}
-
 module.exports = {
   Blog,
   validateBlog,
-  validateComment,
-  validateReply,
 }

@@ -1,12 +1,31 @@
 class CommentController {
+  static Comment
   static Blog
+  static User
   static validateComment
-  static mongoose
+  static validateCommentText
 
-  static setData = (Blog, validateComment, mongoose) => {
+  static setData = (
+    Comment,
+    Blog,
+    User,
+    validateComment,
+    validateCommentText
+  ) => {
+    this.Comment = Comment
     this.Blog = Blog
+    this.User = User
     this.validateComment = validateComment
-    this.mongoose = mongoose
+    this.validateCommentText = validateCommentText
+  }
+
+  // @desc    get blog comment
+  // @route   GET /comment
+  // @access  Public
+  static getBlogComments = async (req, res) => {
+    const { blogId } = req.params
+    const comments = await this.Comment.find({ blogId: blogId })
+    res.json({ comments })
   }
 
   // @desc    post new comment
@@ -14,40 +33,47 @@ class CommentController {
   // @access  Private
   static postComment = async (req, res) => {
     const { commentText, userId, blogId } = req.body
-    const { error } = this.validateComment({ commentText, userId })
+    const { error } = this.validateComment({ commentText, userId, blogId })
     if (error) return res.status(400).json({ error: error.details[0].message })
 
-    if (!blogId) return res.status(400).json({ message: 'Blog Id required' })
-    const blog = await this.Blog.findOne({ _id: req.body.blogId })
-    blog.comments.push({
+    const user = await this.User.findOne({ _id: userId })
+    if (!user)
+      return res.status(400).json({ message: 'user not have a account' })
+
+    const blog = await this.Blog.findOne({ _id: blogId })
+    if (!blog) return res.status(404).json({ message: "Blog doesn't exist" })
+
+    const comment = new this.Comment({
       commentText: commentText,
       userId: userId,
+      blogId: blogId,
     })
-    await blog.save()
-    res.json({ comment: blog.comments })
+
+    await comment.save()
+    res.json({ comment })
   }
 
   // @desc    update comment
   // @route   PUT /comment
   // @access  Private
   static updateComment = async (req, res) => {
-    let { commentText, blogId } = req.body
-    let { id } = req.params
+    let { commentText } = req.body
+    const { id } = req.params
 
-    const blog = this.blog.find({ _id: blogId })
-    if (!blog) return res.status(404).json({ message: "Blog Doesn't exist" })
+    const { error } = this.validateCommentText({ commentText })
+    if (error) return res.status(400).json({ error: error.details[0].message })
 
-    let comment = await this.Blog.findOneAndUpdate(
-      {
-        'comments._id': id,
-      },
+    const comment = await this.Comment.findOneAndUpdate(
+      { _id: id },
       {
         $set: {
-          'comments.$.commentText': commentText,
+          commentText: commentText,
         },
       },
       { new: true }
     )
+    if (!comment)
+      return res.status(200).json({ message: 'Comment with this id not found' })
     res.status(200).json(comment)
   }
 
@@ -56,14 +82,9 @@ class CommentController {
   // @access  Private
   static deleteComment = async (req, res) => {
     const { id } = req.params
-    let comment = await this.Blog.findOneAndUpdate(
-      { 'comments._id': id },
-      { $pull: { comments: { _id: id } } },
-      { new: true }
-    )
-    if (!comment) {
-      return res.status(404).json({ message: 'comment was not found' })
-    }
+    const comment = await this.Comment.findOneAndDelete({ _id: id })
+    if (!comment)
+      return res.status(200).json({ message: 'Comment with this id not found' })
     res.status(200).json({ comment })
   }
 }

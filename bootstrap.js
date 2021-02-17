@@ -3,12 +3,13 @@ const passport = require('passport')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const LocalStrategy = require('passport-local').Strategy
+const { Blog, validateBlog } = require('./models/Blog')
 const {
-  Blog,
-  validateBlog,
+  Comment,
   validateComment,
   validateReply,
-} = require('./models/Blog')
+  validateCommentText,
+} = require('./models/Comment')
 
 const { User, validateUser } = require('./models/User')
 const multer = require('multer')
@@ -18,6 +19,7 @@ const isAuth = require('./utils/middlewares')
 const UserController = require('./controllers/UserController')
 const BlogController = require('./controllers/BlogController')
 const CommentController = require('./controllers/CommentController')
+const ReplyController = require('./controllers/ReplyController')
 
 module.exports = function (wagner) {
   wagner.factory('joi', function () {
@@ -48,12 +50,20 @@ module.exports = function (wagner) {
     return validateComment
   })
 
+  wagner.factory('validateCommentText', function () {
+    return validateCommentText
+  })
+
   wagner.factory('validateReply', function () {
     return validateReply
   })
 
   wagner.factory('User', function () {
     return User
+  })
+
+  wagner.factory('Comment', function () {
+    return Comment
   })
 
   wagner.factory('validateUser', function () {
@@ -86,6 +96,10 @@ module.exports = function (wagner) {
 
   wagner.factory('CommentController', function () {
     return CommentController
+  })
+
+  wagner.factory('ReplyController', function () {
+    return ReplyController
   })
 
   wagner.factory('mongoose', function () {

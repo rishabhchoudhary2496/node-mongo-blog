@@ -1,0 +1,15 @@
+<div class="row mt-3">
+    <div class="col-1"></div>
+    <div class="col-10 ">
+        <% for(let i=0; i<blogs.length; i++) { %>
+                <div class="card mt-3 p-3">
+                    <h2 class="text text-info"><%=blogs[i].title%></h2>
+                    <p><%=blogs[i].content%></p>
+                        <div class="col-sm-3">
+                            <a href= <%=blogs[i]._id%> class="btn btn-warning px-2">Read Blog</a>
+                        </div>
+                </div>
+                <% } %>  
+    <div class="col-1"></div>
+    </div>
+</div>

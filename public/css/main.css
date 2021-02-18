@@ -1,0 +1,19 @@
+body {
+  /* background-color: #ffc600; */
+}
+
+a {
+  text-decoration: none;
+}
+
+.has-success .form-control {
+  border: 2px solid #28a745;
+}
+
+.has-danger .form-control {
+  border: 2px solid #dc3545;
+}
+
+.form-group .text-help {
+  color: #dc3545;
+}

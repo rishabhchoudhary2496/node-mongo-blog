@@ -6,6 +6,7 @@ wagner.invoke(
   (passport, User, isAuth, multer, storage, validateUser, UserController) => {
     //injecting dependencies in controller
     UserController.setData(passport, User, validateUser)
+    router.get('/login', UserController.showLoginPage)
     router.post('/login', UserController.login)
     router.get('/logout', isAuth, UserController.logout)
 
@@ -14,6 +15,7 @@ wagner.invoke(
       limits: { fileSize: 1024 * 1024 * 5 },
     })
 
+    router.get('/signup', UserController.showSignUpPage)
     router.post('/signup', upload.single('profilePic'), UserController.signUp)
   }
 )

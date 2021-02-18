@@ -9,6 +9,14 @@ class UserController {
     this.validateUser = validateUser
   }
 
+  static showSignUpPage = async (req, res) => {
+    res.render('SignUp', { title: 'SignUp', layout: './layouts/AuthLayout' })
+  }
+
+  static showLoginPage = async (req, res) => {
+    res.render('Login', { title: 'Login', layout: './layouts/AuthLayout' })
+  }
+
   // @desc    login
   // @route   POST /login
   // @access  Public
@@ -43,7 +51,7 @@ class UserController {
   // @access  Private
   static logout = async (req, res) => {
     req.logout()
-    return res.status(200).json('logout success')
+    return res.redirect('/user/login')
   }
 
   // @desc    signup

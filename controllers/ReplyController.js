@@ -11,27 +11,79 @@ class ReplyController {
 
   static postReply = async (req, res) => {
     const { replyText, commentId } = req.body
-    const { error } = this.validateComment({ replyText, commentId })
+    const { error } = this.validateReply({ replyText, commentId })
     if (error) return res.status(400).json({ error: error.details[0].message })
 
-    let comment = await this.Comment.findOne({ _id: commentId })
+    let comment = await this.Comment.findOneAndUpdate(
+      { _id: commentId },
+      {
+        $push: {
+          replies: {
+            replyText: replyText,
+            userId: req.user._id,
+          },
+        },
+      },
+      {
+        new: true,
+      }
+    )
+
     if (!comment) return res.status(200).json({ message: 'comment not found' })
-    comment = comment.replies.push({
-      replyText: replyText,
-      commentId: commentId,
-      userId: req.user._id,
-    })
-    await comment.save()
     res.status(200).json({ comment })
   }
 
   static updateReply = async (req, res) => {
     const { replyText, commentId } = req.body
-    //update reply
+    const { id } = req.params
+    const { error } = this.validateReply({ replyText, commentId })
+    if (error) return res.status(400).json({ error: error.details[0].message })
+
+    //find if reply user is same as logged in user if yes then only he can update
+
+    let comment = await this.Comment.aggregate().match({
+      'replies.userId': req.user._id,
+    })
+
+    if (comment.length <= 0)
+      return res.status(403).json({ message: 'You cannot update this reply' })
+
+    comment = await this.Comment.findOneAndUpdate(
+      {
+        $and: [{ _id: commentId }, { 'replies._id': id }],
+      },
+      {
+        'replies.$.replyText': replyText,
+      },
+      {
+        new: true,
+      }
+    )
+
+    if (!comment)
+      return res.status(404).json({ message: 'comment or reply not found' })
+
+    res.json({ comment: comment })
   }
 
   static deleteReply = async (req, res) => {
-    //delete reply
+    const { id } = req.params
+
+    //find if reply user is same as logged in user if yes then only he can delete
+    let comment = await this.Comment.aggregate().match({
+      'replies.userId': req.user._id,
+    })
+
+    if (comment.length <= 0)
+      return res.status(403).json({ message: 'You cannot delete this reply' })
+
+    comment = await this.Comment.findOneAndUpdate(
+      { 'replies._id': req.params.id },
+      { $pull: { replies: { _id: id } } },
+      { new: true }
+    )
+    if (!comment) return res.status(404).json({ message: 'comment not found' })
+    res.json(comment)
   }
 }
 

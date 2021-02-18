@@ -12,7 +12,7 @@ class BlogController {
   // @access  Public
   static getBlogList = async (req, res) => {
     const blogs = await this.Blog.find()
-    res.json({ blogs })
+    res.render('Home', { title: 'Home', blogs: blogs })
   }
 
   // @desc    Create new blog
@@ -46,7 +46,7 @@ class BlogController {
     const blog = await this.Blog.findOne({ _id: id })
     if (!blog)
       return res.status(404).json({ message: 'No Blog Exist With This Id' })
-    res.json({ blog })
+    res.render('Blog', { title: 'Blog', blog: blog })
   }
 
   // @desc    Update blog

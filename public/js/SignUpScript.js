@@ -1,11 +1,10 @@
-const sendSignUpRequest = async (formDataJsonString) => {
+const sendSignUpRequest = async (formData) => {
   try {
     const result = await fetch('http://localhost:5000/user/signup', {
       method: 'POST',
-      body: formDataJsonString,
+      body: formData,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
       },
     })
 
@@ -27,7 +26,10 @@ window.onload = function () {
   const form = document.getElementById('signUpForm')
   const password = document.getElementById('password')
   const confirmPassword = document.getElementById('confirmPassword')
+  const file = document.getElementById('file')
   const pristine = new Pristine(form)
+  let imgFile
+  let imageUrl
 
   pristine.addValidator(
     confirmPassword,
@@ -42,24 +44,38 @@ window.onload = function () {
     false
   )
 
+  file.addEventListener('change', (e) => {
+    const previewImg = document.getElementById('previewImg')
+    imgFile = e.currentTarget.files[0]
+    imageUrl = URL.createObjectURL(imgFile)
+    console.log(imageUrl)
+    previewImg.height = 200
+    previewImg.width = 200
+    previewImg.src = imageUrl
+  })
+
   form.addEventListener('submit', function (e) {
     e.preventDefault()
     // check if the form is valid
+    if (!imgFile) {
+      return alert('Please Upload Photo')
+    }
     const valid = pristine.validate() // returns true or false
     if (valid) {
       const formData = new FormData()
       for (let i = 0; i < form.length; i++) {
         formData.append(form[i].name, form[i].value)
       }
+      console.log('imgFile', imgFile)
       formData.delete('')
       formData.delete('confirmPassword')
+      formData.append('profilePic', imgFile)
 
       const plainFormData = Object.fromEntries(formData.entries())
-      const formDataJsonString = JSON.stringify(plainFormData)
 
-      console.log(formDataJsonString)
+      console.log(plainFormData)
       //sending ajax request
-      sendSignUpRequest(formDataJsonString)
+      sendSignUpRequest(formData)
     }
   })
 }

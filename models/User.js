@@ -46,6 +46,7 @@ userSchema.pre('save', async function (next) {
 const User = mongoose.model('User', userSchema)
 
 const validateUser = function (user) {
+  console.log('user', user)
   const schema = Joi.object({
     name: Joi.string().required().min(3).max(255),
     email: Joi.string()

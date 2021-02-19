@@ -19,15 +19,6 @@ class CommentController {
     this.validateCommentText = validateCommentText
   }
 
-  // @desc    get blog comment
-  // @route   GET /comment
-  // @access  Public
-  static getBlogComments = async (req, res) => {
-    const { blogId } = req.params
-    const comments = await this.Comment.find({ blogId: blogId })
-    res.json({ comments })
-  }
-
   // @desc    post new comment
   // @route   POST /comment
   // @access  Private
@@ -43,6 +34,7 @@ class CommentController {
       commentText: commentText,
       userId: req.user._id,
       blogId: blogId,
+      layout: './layouts/AuthLayout',
     })
 
     await comment.save()

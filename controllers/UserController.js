@@ -2,11 +2,13 @@ class UserController {
   static passport
   static User
   static validateUser
+  static Blog
 
-  static setData(passport, User, validateUser) {
+  static setData(passport, User, validateUser, Blog) {
     this.passport = passport
     this.User = User
     this.validateUser = validateUser
+    this.Blog = Blog
   }
 
   static showSignUpPage = async (req, res) => {
@@ -15,6 +17,20 @@ class UserController {
 
   static showLoginPage = async (req, res) => {
     res.render('Login', { title: 'Login', layout: './layouts/AuthLayout' })
+  }
+
+  static showProfile = async (req, res) => {
+    const { id } = req.params
+    if (!id && req.user) {
+      id = req.user._id
+    }
+    const user = await this.User.findOne({ _id: id }).select('-password')
+    if (!user) return res.status(404).json({ message: 'User Not Found' })
+    const userBlogs = await this.Blog.find({ authorId: user._id })
+    res.render('Profile', {
+      title: 'profile',
+      data: { user: user, userBlogs: userBlogs },
+    })
   }
 
   // @desc    login

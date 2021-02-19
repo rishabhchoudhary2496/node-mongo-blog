@@ -1,9 +1,11 @@
 class BlogController {
   static Blog
+  static Comment
   static validateBlog
 
-  static setData(Blog, validateBlog) {
+  static setData(Blog, Comment, validateBlog) {
     this.Blog = Blog
+    this.Comment = Comment
     this.validateBlog = validateBlog
   }
 
@@ -11,7 +13,8 @@ class BlogController {
   // @route   GET /blog
   // @access  Public
   static getBlogList = async (req, res) => {
-    const blogs = await this.Blog.find()
+    const blogs = await this.Blog.find().populate('authorId')
+
     res.render('Home', { title: 'Home', blogs: blogs })
   }
 
@@ -19,8 +22,8 @@ class BlogController {
   // @route   POST /blog
   // @access  Private
   static createBlog = async (req, res) => {
-    const { title, content, tags, authorId } = req.body
-    const { error } = this.validateBlog({ title, content, authorId })
+    const { title, content, tags } = req.body
+    const { error } = this.validateBlog({ title, content })
     if (error) return res.status(400).json({ error: error.details[0].message })
     let blog = await this.Blog.findOne({ title: title })
     if (blog)
@@ -32,7 +35,7 @@ class BlogController {
       title: title,
       content: content,
       tags: tags,
-      authorId: authorId,
+      authorId: req.user._id,
     })
     await blog.save()
     res.json({ blog })
@@ -43,10 +46,22 @@ class BlogController {
   // @access  Public
   static getBlog = async (req, res) => {
     const { id } = req.params
-    const blog = await this.Blog.findOne({ _id: id })
+    const blog = await this.Blog.findOne({ _id: id }).populate('authorId')
+    console.log('blog', blog)
     if (!blog)
       return res.status(404).json({ message: 'No Blog Exist With This Id' })
-    res.render('Blog', { title: 'Blog', blog: blog })
+
+    const comments = await this.Comment.find({ blogId: id }).populate(
+      'userId',
+      '-password'
+    )
+
+    console.log(comments)
+    res.render('Blog', {
+      title: 'Blog',
+      data: { blog: blog, comments: comments },
+      layout: './layouts/NavLess',
+    })
   }
 
   // @desc    Update blog

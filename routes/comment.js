@@ -20,7 +20,6 @@ wagner.invoke(
       validateCommentText
     )
     router.post('/', isAuth, CommentController.postComment)
-    router.get('/:blogId', CommentController.getBlogComments)
     router.put('/:id', isAuth, CommentController.updateComment)
     router.delete('/:id', isAuth, CommentController.deleteComment)
   }

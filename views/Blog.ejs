@@ -1,12 +1,77 @@
 <div class="row mt-4">
   <div class="col-2"></div>
   <div class="col-8">
-    <% if (blog) { %>
-    <h2 class="text text-info"><%= blog.title %></h2>
+    <% if (data.blog) { %>
+    <h2 class="text text-info text-center mt-2"><%= data.blog.title %></h2>
     <div>
-      <p><%= blog.content %></p>
+      <p class="blog-content mt-3"><%= data.blog.content %></p>
     </div>
-    <%}%>
+    <% if (data.blog.authorId) { %>
+    <a href="#">
+      <div class="mx-3 mt-3">
+        <p class="text text-danger">
+          <img
+            src="http://localhost:5000/<%= data.blog.authorId.profilePic %>"
+            alt="author pic"
+            width="25"
+            height="25"
+            class="rounded-circle profile-pic"
+          />
+          <%=data.blog.authorId.name%>
+        </p>
+      </div>
+    </a>
+    <%}%> <%}%>
   </div>
   <div class="col-2"></div>
 </div>
+<div class="row mt-4">
+  <div class="col-2"></div>
+  <div class="col-8">
+    <form novalidate id="commentForm" class="form-container" method="POST">
+      <div class="form-group my-3">
+        <textarea
+          class="form-control"
+          id="comment"
+          name="commentText"
+          placeholder="comment here"
+          required
+          data-pristine-required-message="Comment Required"
+        ></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" id="postBtn">
+        Post Comment
+      </button>
+    </form>
+  </div>
+  <div class="col-2"></div>
+</div>
+<div class="row mb-3">
+    <div class="col-2"></div>
+    <div class="col-8">
+    <% if (data.comments) { %> 
+    <% for(let i=0; i<data.comments.length; i++) { %>
+      <div class="card mt-3 p-3">
+      <a href="/user/profile/<%=data.comments[i].userId._id%>">
+       <div class="mt-3">
+         <p class="text text-danger">
+          <img
+            src="http://localhost:5000/<%= data.comments[i].userId.profilePic %>"
+            alt="author pic"
+            width="25"
+            height="25"
+            class="rounded-circle profile-pic"
+          />
+           <%=data.comments[i].userId.name%>
+          </p>
+         </div>
+       </a>
+        <p><%=data.comments[i].commentText%></p>
+      </div>
+      <% } %> 
+  <%}%>
+    </div>
+    <div class="col-2"></div>
+</div>
+<script src="/public/js/pristine.js"></script>
+<script src="/public/js/CommentScript.js"></script>

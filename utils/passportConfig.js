@@ -17,8 +17,6 @@ module.exports = function (wagner) {
               user.password
             )
 
-            console.log('isPasswordMatched', isPasswordMatched)
-
             if (!isPasswordMatched)
               return done(null, false, {
                 message: 'Email or Password is Incorrect',

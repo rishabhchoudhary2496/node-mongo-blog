@@ -3,8 +3,12 @@
     <div class="col-10 ">
         <% for(let i=0; i<blogs.length; i++) { %>
                 <div class="card mt-3 p-3">
-                    <h2 class="text text-info"><%=blogs[i].title%></h2>
-                    <p><%=blogs[i].content%></p>
+                    <a href="#">
+                        <div>
+                            <p class="text text-danger"><img src="http://localhost:5000/<%=blogs[i].authorId.profilePic%>" alt="author pic" width=25 height=25 class="rounded-circle profile-pic"> <%=blogs[i].authorId.name%></p>
+                        </div>
+                    </a>
+                    <h5 class="text text-info"><%=blogs[i].title%></h5>
                         <div class="col-sm-3">
                             <a href= <%=blogs[i]._id%> class="btn btn-warning px-2">Read Blog</a>
                         </div>

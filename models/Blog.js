@@ -37,7 +37,6 @@ const validateBlog = function (blog) {
   const schema = Joi.object({
     title: Joi.string().required().min(5).max(500),
     content: Joi.string().required().min(10),
-    authorId: Joi.objectId().required(),
   })
   return schema.validate(blog)
 }

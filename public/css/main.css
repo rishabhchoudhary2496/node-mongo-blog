@@ -29,3 +29,7 @@ a {
   line-height: 0.65;
   margin: 0.1em 0.1em 0.2em 0;
 }
+
+.text-important {
+  font-weight: 500;
+}

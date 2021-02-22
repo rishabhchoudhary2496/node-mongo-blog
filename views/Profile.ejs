@@ -1,3 +1,4 @@
+<script src="/public/js/ProfileScript.js"></script>
 <div class="row">
   <div class="col-1"></div>
   <div class="col-10">
@@ -30,10 +31,11 @@
            <div class="card p-3 mt-4">
        <h5 class="text text-info"><%=data.userBlogs[i].title%></h5>
           <div class="col-sm-3">
-             <a href= <%=data.userBlogs[i]._id%> class="btn btn-warning px-2">Read Blog</a>
-          </div>
+             <button class="btn btn-warning px-2" id="readBtn" data-blogId=<%=data.userBlogs[i]._id%> >Read Blog</button>
+              </div>
            </div>
        <% } %> 
   </div>
   <div class="col-1"></div>
 </div>
+<!-- data.userBlogs[i]._id -->

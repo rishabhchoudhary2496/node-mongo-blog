@@ -67,6 +67,35 @@
          </div>
        </a>
         <p><%=data.comments[i].commentText%></p>
+        <div>
+        <textarea
+          class="form-control"
+          id="reply"
+          name="replyText"
+          placeholder="reply here"
+          required
+         ></textarea>
+        <button type="submit" data-commentid="<%=data.comments[i]._id%>"  id="replyBtn" class="btn btn-success mt-2">Post Reply</button>
+        </form>
+        </div>
+        <div id="replies">
+         <% for(let j=0; j<data.comments[i].replies.length; j++){%>
+            <div class="reply mt-3">
+            <p class="text text-danger">
+            <img
+            src="http://localhost:5000/<%=data.comments[i].replies[j].replyText%>"
+            alt="author pic"
+            width="25"
+            height="25"
+            class="rounded-circle profile-pic"
+          />
+           <%=data.comments[i].userId.name%>
+          </p>
+              <p><%=data.comments[i].replies[j].replyText%></p>
+            </div>
+
+         <% } %>
+        </div>
       </div>
       <% } %> 
   <%}%>
@@ -75,3 +104,4 @@
 </div>
 <script src="/public/js/pristine.js"></script>
 <script src="/public/js/CommentScript.js"></script>
+<script src="/public/js/PostReply.js"></script>

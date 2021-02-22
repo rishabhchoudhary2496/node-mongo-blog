@@ -18,11 +18,18 @@ class BlogController {
     res.render('Home', { title: 'Home', blogs: blogs })
   }
 
+  static writeBlog = async (req, res) => {
+    res.render('CreateBlog', {
+      title: 'Create Blog',
+    })
+  }
+
   // @desc    Create new blog
   // @route   POST /blog
   // @access  Private
   static createBlog = async (req, res) => {
-    const { title, content, tags } = req.body
+    console.log(req.body)
+    let { title, content, tags } = req.body
     const { error } = this.validateBlog({ title, content })
     if (error) return res.status(400).json({ error: error.details[0].message })
     let blog = await this.Blog.findOne({ title: title })
@@ -30,6 +37,8 @@ class BlogController {
       return res.status(400).json({
         message: 'Choose Another Title.Blog With This Title Already Exist',
       })
+
+    tags = JSON.parse(tags)
 
     blog = new this.Blog({
       title: title,

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
+const deepPopulate = require('mongoose-deep-populate')(mongoose)
 Joi.objectId = require('joi-objectid')(Joi)
 
 const replySchema = mongoose.Schema({
@@ -53,6 +54,17 @@ const validateReply = function (reply) {
   })
   return schema.validate(reply)
 }
+
+commentSchema.plugin(deepPopulate, {
+  populate: {
+    userId: {
+      select: 'name profilePic',
+    },
+    'replies.userId': {
+      select: 'name profilePic',
+    },
+  },
+})
 
 module.exports = {
   Comment,

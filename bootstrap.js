@@ -12,6 +12,8 @@ const {
 } = require('./models/Comment')
 
 const { User, validateUser } = require('./models/User')
+const Like = require('./models/Like')
+const Dislike = require('./models/Dislike')
 const multer = require('multer')
 const storage = require('./utils/multerConfig')
 const isAuth = require('./utils/middlewares')
@@ -104,5 +106,13 @@ module.exports = function (wagner) {
 
   wagner.factory('mongoose', function () {
     return mongoose
+  })
+
+  wagner.factory('Like', function () {
+    return Like
+  })
+
+  wagner.factory('Dislike', function () {
+    return Dislike
   })
 }

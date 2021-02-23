@@ -22,8 +22,6 @@ const blogSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
-  Likes: { type: Number, default: 0 },
-  disLikes: { type: Number, default: 0 },
   createdAt: {
     type: Date,
     required: true,

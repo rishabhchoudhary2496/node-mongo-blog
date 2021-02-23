@@ -30,6 +30,7 @@
        <% for(let i=0; i<data.userBlogs.length; i++) { %>
            <div class="card p-3 mt-4">
        <h5 class="text text-info"><%=data.userBlogs[i].title%></h5>
+         <p class="text text-danger text-important" id="date">Published On: <%=new Date(data.userBlogs[i].createdAt).toDateString()%></p>
           <div class="col-sm-3">
              <button class="btn btn-warning px-2" id="readBtn" data-blogId=<%=data.userBlogs[i]._id%> >Read Blog</button>
               </div>

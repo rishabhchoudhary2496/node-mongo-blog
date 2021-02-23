@@ -7,9 +7,9 @@
       <p class="blog-content mt-3"><%= data.blog.content %></p>
     </div>
     <% if (data.blog.authorId) { %>
-    <a href="#">
+    <a href="/user/profile/<%=data.blog.authorId._id%>">
       <div class="mx-3 mt-3">
-        <p class="text text-danger">
+        <p class="text text-danger mt-4">
           <img
             src="http://localhost:5000/<%= data.blog.authorId.profilePic %>"
             alt="author pic"
@@ -18,9 +18,38 @@
             class="rounded-circle profile-pic"
           />
           <%=data.blog.authorId.name%>
-        </p>
+        </p> 
       </div>
-    </a>
+      </a>
+
+        <% if (data.likeCount.length > 0) { %>
+          <% if (data.likeCount[0].count === 1) { %>
+              <p class="text text-dark"><%=data.likeCount[0].count%> Like</p>
+
+          <%}%>
+
+            <% if (data.likeCount[0].count > 1) { %>
+              <p class="text text-dark"><%=data.likeCount[0].count%> Likes</p>
+          <%}%>
+         <%}%>
+
+         
+         <% if (data.dislikeCount.length > 0) { %>
+             <% if (data.dislikeCount[0].count === 1) { %>
+             <p class="text text-dark"><%=data.dislikeCount[0].count%> Dislike</p>
+            <%}%>
+            
+            <% if (data.dislikeCount[0].count === 1) { %>
+                <p class="text text-dark"><%=data.dislikeCount[0].count%> Dislikes</p>
+            <%}%>
+
+         <%}%>
+
+        <div class="mt-4">
+          <i class="far fa-thumbs-up" id="thumbsUp"><span>Like</span></i>
+          <i class="far fa-thumbs-down" id="thumbsDown"><span>Dislike</span></i>
+        </div>
+
     <%}%> <%}%>
   </div>
   <div class="col-2"></div>

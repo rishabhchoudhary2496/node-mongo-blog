@@ -2,11 +2,15 @@ class BlogController {
   static Blog
   static Comment
   static validateBlog
+  static Like
+  static Dislike
 
-  static setData(Blog, Comment, validateBlog) {
+  static setData(Blog, Comment, validateBlog, Like, Dislike) {
     this.Blog = Blog
     this.Comment = Comment
     this.validateBlog = validateBlog
+    this.Like = Like
+    this.Dislike = Dislike
   }
 
   // @desc    Get all the blogs
@@ -15,7 +19,11 @@ class BlogController {
   static getBlogList = async (req, res) => {
     const blogs = await this.Blog.find().populate('authorId')
 
-    res.render('Home', { title: 'Home', blogs: blogs })
+    res.render('Home', {
+      title: 'Home',
+      blogs: blogs,
+      loggedInUserId: req.user._id,
+    })
   }
 
   static writeBlog = async (req, res) => {
@@ -60,15 +68,30 @@ class BlogController {
     if (!blog)
       return res.status(404).json({ message: 'No Blog Exist With This Id' })
 
-    const comments = await this.Comment.find({ blogId: id }).populate(
-      'userId',
-      '-password'
+    const comments = await this.Comment.find({ blogId: id }).deepPopulate(
+      'userId'
     )
 
-    console.log(comments)
+    const LikeCount = await this.Like.aggregate([
+      { $group: { _id: { blogId: id } } },
+      { $count: 'count' },
+    ])
+
+    const disLikeCount = await this.Dislike.aggregate([
+      { $group: { _id: { blogId: id } } },
+      { $count: 'count' },
+    ])
+
+    console.log('like ', LikeCount)
+    console.log('dislike ', disLikeCount)
     res.render('Blog', {
       title: 'Blog',
-      data: { blog: blog, comments: comments },
+      data: {
+        blog: blog,
+        comments: comments,
+        likeCount: LikeCount,
+        dislikeCount: disLikeCount,
+      },
       layout: './layouts/NavLess',
     })
   }
@@ -106,6 +129,44 @@ class BlogController {
       return res.status(404).json({ message: 'No Blog Exist With This Id' })
 
     res.status(200).json({ blog })
+  }
+
+  static LikeBlog = async (req, res) => {
+    const { id } = req.params
+    const haveLiked = await this.Like.findOne({
+      blogId: id,
+      userId: req.user._id,
+    })
+    if (haveLiked) return res.json({ message: 'Already Liked by user' })
+
+    await this.Dislike.findOneAndDelete({ blogId: id, userId: req.user._id })
+
+    let like = new this.Like({
+      blogId: id,
+      userId: req.user._id,
+    })
+
+    await like.save()
+    res.status(200).json({ message: 'liked' })
+  }
+
+  static DislikeBlog = async (req, res) => {
+    const { id } = req.params
+    const haveDisliked = await this.Dislike.findOne({
+      blogId: id,
+      userId: req.user._id,
+    })
+    if (haveDisliked) return res.json({ message: 'Already Disliked by user' })
+
+    await this.Like.findOneAndDelete({ blogId: id, userId: req.user._id })
+
+    let dislike = new this.Dislike({
+      blogId: id,
+      userId: req.user._id,
+    })
+
+    await dislike.save()
+    res.status(200).json({ message: 'dislike' })
   }
 }
 

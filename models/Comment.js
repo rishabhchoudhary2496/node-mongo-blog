@@ -58,10 +58,15 @@ const validateReply = function (reply) {
 commentSchema.plugin(deepPopulate, {
   populate: {
     userId: {
-      select: 'name profilePic',
+      select: '_id name profilePic',
     },
-    'replies.userId': {
-      select: 'name profilePic',
+  },
+})
+
+replySchema.plugin(deepPopulate, {
+  populate: {
+    userId: {
+      select: '_id name profilePic',
     },
   },
 })

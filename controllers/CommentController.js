@@ -3,28 +3,21 @@ class CommentController {
   static Blog
   static User
   static validateComment
-  static validateCommentText
 
-  static setData = (
-    Comment,
-    Blog,
-    User,
-    validateComment,
-    validateCommentText
-  ) => {
+  static setData = (Comment, Blog, User, validateComment) => {
     this.Comment = Comment
     this.Blog = Blog
     this.User = User
     this.validateComment = validateComment
-    this.validateCommentText = validateCommentText
   }
 
   // @desc    post new comment
   // @route   POST /comment
   // @access  Private
   static postComment = async (req, res) => {
-    const { commentText, blogId } = req.body
-    const { error } = this.validateComment({ commentText, blogId })
+    const { commentText } = req.body
+    const { blogId } = req.params
+    const { error } = this.validateComment({ commentText })
     if (error) return res.status(400).json({ error: error.details[0].message })
 
     const blog = await this.Blog.findOne({ _id: blogId })
@@ -38,25 +31,26 @@ class CommentController {
     })
 
     await comment.save()
-    res.json({ comment })
+    res.status(200).json({ comment })
   }
 
   // @desc    update comment
   // @route   PUT /comment
   // @access  Private
   static updateComment = async (req, res) => {
+    console.log('re.body', req.body)
     let { commentText } = req.body
     const { id } = req.params
 
-    const { error } = this.validateCommentText({ commentText })
+    const { error } = this.validateComment({ commentText })
     if (error) return res.status(400).json({ error: error.details[0].message })
 
     let comment = await this.Comment.findOne({ _id: id })
     if (!comment)
       return res.status(200).json({ message: 'Comment with this id not found' })
 
-    if (comment.userId !== req.user._id) {
-      return req.status(403).json({ message: "You can't update this comment" })
+    if (String(comment.userId) !== String(req.user._id)) {
+      return res.status(403).json({ message: "You can't update this comment" })
     }
 
     comment = await this.Comment.findOneAndUpdate(
@@ -77,12 +71,19 @@ class CommentController {
   // @access  Private
   static deleteComment = async (req, res) => {
     const { id } = req.params
-    const comment = await this.Comment.findOneAndDelete({ _id: id })
+    let comment = await this.Comment.findOne({ _id: id })
     if (!comment)
       return res.status(200).json({ message: 'Comment with this id not found' })
-    if (comment.userId !== req.user._id) {
-      return req.status(403).json({ message: "You can't delete this comment" })
+
+    const commentUserId = String(comment.userId)
+    const loggedInUserId = String(req.user._id)
+
+    if (commentUserId !== loggedInUserId) {
+      console.log(comment.userId, req.user._id)
+      return res.status(403).json({ message: "You can't delete this comment" })
     }
+
+    comment = await this.Comment.deleteOne({ _id: id })
     res.status(200).json({ comment })
   }
 }

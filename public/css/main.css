@@ -44,3 +44,33 @@ a {
   font-size: 1.2rem;
   cursor: pointer;
 }
+
+.text-inline-block {
+  display: inline-block;
+}
+
+.trash {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 1;
+  cursor: pointer;
+}
+
+.editIcon {
+  position: absolute;
+  right: 35px;
+  top: 10px;
+  font-size: 1;
+  cursor: pointer;
+}
+
+.blog-content {
+  font-family: 'Open Sans', sans-serif;
+  letter-spacing: 0.6px;
+  padding-top: 10px;
+}
+
+.hideElement {
+  display: none;
+}

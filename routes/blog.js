@@ -3,9 +3,18 @@ const router = express.Router()
 const wagner = require('wagner-core')
 
 wagner.invoke(
-  (Blog, Comment, validateBlog, isAuth, BlogController, Like, Dislike) => {
+  (
+    Blog,
+    Comment,
+    validateBlog,
+    isAuth,
+    BlogController,
+    Like,
+    Dislike,
+    mongoose
+  ) => {
     //injecting dependencies in controller
-    BlogController.setData(Blog, Comment, validateBlog, Like, Dislike)
+    BlogController.setData(Blog, Comment, validateBlog, Like, Dislike, mongoose)
     router.get('/', isAuth, BlogController.getBlogList)
     router.get('/createBlog', isAuth, BlogController.writeBlog)
     router.post('/', isAuth, BlogController.createBlog)

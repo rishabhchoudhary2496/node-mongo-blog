@@ -4,12 +4,7 @@ const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const LocalStrategy = require('passport-local').Strategy
 const { Blog, validateBlog } = require('./models/Blog')
-const {
-  Comment,
-  validateComment,
-  validateReply,
-  validateCommentText,
-} = require('./models/Comment')
+const { Comment, validateComment, validateReply } = require('./models/Comment')
 
 const { User, validateUser } = require('./models/User')
 const Like = require('./models/Like')
@@ -50,10 +45,6 @@ module.exports = function (wagner) {
 
   wagner.factory('validateComment', function () {
     return validateComment
-  })
-
-  wagner.factory('validateCommentText', function () {
-    return validateCommentText
   })
 
   wagner.factory('validateReply', function () {

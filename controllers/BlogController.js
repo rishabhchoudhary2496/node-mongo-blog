@@ -4,13 +4,15 @@ class BlogController {
   static validateBlog
   static Like
   static Dislike
+  static mongoose
 
-  static setData(Blog, Comment, validateBlog, Like, Dislike) {
+  static setData(Blog, Comment, validateBlog, Like, Dislike, mongoose) {
     this.Blog = Blog
     this.Comment = Comment
     this.validateBlog = validateBlog
     this.Like = Like
     this.Dislike = Dislike
+    this.mongoose = mongoose
   }
 
   // @desc    Get all the blogs
@@ -36,7 +38,6 @@ class BlogController {
   // @route   POST /blog
   // @access  Private
   static createBlog = async (req, res) => {
-    console.log(req.body)
     let { title, content, tags } = req.body
     const { error } = this.validateBlog({ title, content })
     if (error) return res.status(400).json({ error: error.details[0].message })
@@ -64,26 +65,36 @@ class BlogController {
   static getBlog = async (req, res) => {
     const { id } = req.params
     const blog = await this.Blog.findOne({ _id: id }).populate('authorId')
-    console.log('blog', blog)
+
     if (!blog)
       return res.status(404).json({ message: 'No Blog Exist With This Id' })
 
     const comments = await this.Comment.find({ blogId: id }).deepPopulate(
-      'userId'
+      'userId replies.userId'
     )
 
-    const LikeCount = await this.Like.aggregate([
-      { $group: { _id: { blogId: id } } },
-      { $count: 'count' },
-    ])
+    const LikeCount = await this.Like.aggregate()
+      .match({
+        blogId: this.mongoose.Types.ObjectId(id),
+      })
+      .group({ _id: '$blogId', count: { $sum: 1 } })
 
-    const disLikeCount = await this.Dislike.aggregate([
-      { $group: { _id: { blogId: id } } },
-      { $count: 'count' },
-    ])
+    const disLikeCount = await this.Dislike.aggregate()
+      .match({
+        blogId: this.mongoose.Types.ObjectId(id),
+      })
+      .group({ _id: '$blogId', count: { $sum: 1 } })
 
-    console.log('like ', LikeCount)
-    console.log('dislike ', disLikeCount)
+    const loggedInUserLiked = await this.Like.findOne({
+      blogId: id,
+      userId: req.user._id,
+    })
+
+    const loggedInUserDisliked = await this.Dislike.findOne({
+      blogId: id,
+      userId: req.user._id,
+    })
+
     res.render('Blog', {
       title: 'Blog',
       data: {
@@ -91,6 +102,9 @@ class BlogController {
         comments: comments,
         likeCount: LikeCount,
         dislikeCount: disLikeCount,
+        loggedInUserLiked: loggedInUserLiked ? true : false,
+        loggedInUserDisliked: loggedInUserDisliked ? true : false,
+        loggedInUserId: req.user._id,
       },
       layout: './layouts/NavLess',
     })

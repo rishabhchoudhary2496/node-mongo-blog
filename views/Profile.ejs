@@ -28,7 +28,7 @@
           <h5 class="text text-warning mt-4 text-center">Blogs Written</h5>
       <%}%>
        <% for(let i=0; i<data.userBlogs.length; i++) { %>
-           <div class="card p-3 mt-4">
+           <div class="card p-3 my-3">
        <h5 class="text text-info"><%=data.userBlogs[i].title%></h5>
          <p class="text text-danger text-important" id="date">Published On: <%=new Date(data.userBlogs[i].createdAt).toDateString()%></p>
           <div class="col-sm-3">

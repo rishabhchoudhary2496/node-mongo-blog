@@ -63,7 +63,7 @@ class ReplyController {
     if (!comment)
       return res.status(404).json({ message: 'comment or reply not found' })
 
-    res.json({ comment: comment })
+    res.status(200).json({ comment: comment })
   }
 
   static deleteReply = async (req, res) => {
@@ -83,7 +83,7 @@ class ReplyController {
       { new: true }
     )
     if (!comment) return res.status(404).json({ message: 'comment not found' })
-    res.json(comment)
+    res.status(200).json(comment)
   }
 }
 

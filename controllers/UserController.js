@@ -3,12 +3,16 @@ class UserController {
   static User
   static validateUser
   static Blog
+  static fs
+  static path
 
-  static setData(passport, User, validateUser, Blog) {
+  static setData(passport, User, validateUser, Blog, fs, path) {
     this.passport = passport
     this.User = User
     this.validateUser = validateUser
     this.Blog = Blog
+    this.fs = fs
+    this.path = path
   }
 
   static showSignUpPage = async (req, res) => {
@@ -29,7 +33,7 @@ class UserController {
     const userBlogs = await this.Blog.find({ authorId: user._id })
     res.render('Profile', {
       title: 'profile',
-      data: { user: user, userBlogs: userBlogs },
+      data: { user: user, userBlogs: userBlogs, loggedInUserId: req.user._id },
     })
   }
 
@@ -87,10 +91,20 @@ class UserController {
       email: email,
     })
 
-    if (user)
+    if (user) {
+      //delete the uploaded file that multer has uploaded
+      if (req.file.path) {
+        try {
+          await this.fs.unlink(req.file.path)
+        } catch (error) {
+          console.log(error)
+          return res.status(500).json({ message: 'something went wrong' })
+        }
+      }
       return res.status(400).json({
         message: 'user already exists!',
       })
+    }
 
     user = new this.User({
       name: name,

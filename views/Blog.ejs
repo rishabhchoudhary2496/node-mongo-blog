@@ -1,3 +1,4 @@
+
 <div class="row mt-4">
   <div class="col-2"></div>
   <div class="col-8">
@@ -117,7 +118,7 @@
         <p class="text mt-2" id="commentText"><%=data.comments[i].commentText%></p>
         
         <% if (String(data.comments[i].userId._id) === String(data.loggedInUserId)) { %>
-          <i class="fas fa-pencil-alt editIcon text text-primary" ></i>
+          <i class="fas fa-pencil-alt editIcon text text-primary" id='editCommentIcon' ></i>
           <i class="fas fa-trash text text-danger trash" id="trashBtn" data-commentid="<%=data.comments[i]._id%>"></i>
           <%}%>
         <div>
@@ -134,23 +135,33 @@
         <div id="replies">
          <% for(let j=0; j<data.comments[i].replies.length; j++){%>
             <div class="reply mt-3 card p-3">
+              <div>
               <a href="/user/profile/<%=data.comments[i].replies[j].userId._id%>">
-            <span class="text text-danger">
-            <img
-            src="http://localhost:5000/<%=data.comments[i].replies[j].userId.profilePic%>"
-            alt="author pic"
-            width="25"
-            height="25"
-            class="rounded-circle profile-pic"
-          />
-           <%=data.comments[i].replies[j].userId.name%>
-          </span>
-          </a>
+                <span class="text text-danger">
+                <img
+                src="http://localhost:5000/<%=data.comments[i].replies[j].userId.profilePic%>"
+                alt="author pic"
+                width="25"
+                height="25"
+                class="rounded-circle profile-pic"
+              />
+                <%=data.comments[i].replies[j].userId.name%>
+               </span>
+              </a>
+              </div>
+
+         <div class="hideElement" id="updateReplyBox">
+            <textarea id="editReplyArea" class="form-control mt-2">
+            </textarea>
+            <button class="btn btn-warning mb-3 mt-2" id="updateReplyBtn"  data-commentid="<%=data.comments[i]._id%>" data-replyid="<%=data.comments[i].replies[j]._id%>">update</button>
+         </div>
+
         <% if (String(data.comments[i].replies[j].userId._id) === String(data.loggedInUserId)) { %>
+          <i class="fas fa-pencil-alt editIcon text text-primary" id="editReplyIcon"></i>
           <i class="fas fa-trash text text-danger trash" id="replyTrashBtn" data-replyid="<%=data.comments[i].replies[j]._id%>"></i>
           <%}%>
          
-              <p><%=data.comments[i].replies[j].replyText%></p>
+              <p class="text mt-2"><%=data.comments[i].replies[j].replyText%></p>
             </div>
 
          <% } %>
@@ -161,6 +172,7 @@
     </div>
     <div class="col-2"></div>
 </div>
+
 <script src="/public/js/LikeDislike.js"></script>
 <script src="/public/js/pristine.js"></script>
 <script src="/public/js/CommentScript.js"></script>

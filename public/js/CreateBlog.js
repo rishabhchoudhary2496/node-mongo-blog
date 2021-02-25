@@ -14,12 +14,12 @@ const postBlog = async (formDataJsonString) => {
     if (result.status == 200) {
       window.location.href = '/'
     } else {
-      alert(data.error)
-      //   window.location.reload()
+      alert(data.message)
+      window.location.reload()
     }
   } catch (error) {
     console.log(err)
-    // window.location.reload()
+    window.location.reload()
   }
 }
 

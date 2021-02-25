@@ -3,11 +3,13 @@ const app = express()
 const mongoose = require('mongoose')
 const path = require('path')
 const cors = require('cors')
+require('express-async-errors')
 const expressLayouts = require('express-ejs-layouts')
 const session = require('express-session')
 const wagner = require('wagner-core')
 const MongoStore = require('connect-mongo')(session)
 const passport = require('passport')
+const { handleError } = require('./utils/middlewares')
 const { connectToDB } = require('./utils/db')
 app.use(express.json())
 require('./bootstrap')(wagner)
@@ -37,11 +39,10 @@ app.use('/public', express.static(path.resolve(__dirname, 'public')))
 app.set('layout', './layouts/FullWidthLayout')
 app.set('view engine', 'ejs')
 app.set('views', path.resolve(__dirname, 'views/'))
-
 require('./routes')(app)
-const PORT = process.env.PORT || 5000
+app.use(handleError)
 
-console.log('path', path.resolve(__dirname, 'views'))
+const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`)

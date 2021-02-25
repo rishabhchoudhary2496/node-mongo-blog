@@ -47,6 +47,7 @@ const dislikeBlog = async (id) => {
 const likeBtn = document.getElementById('thumbsUp')
 const dislikeBtn = document.getElementById('thumbsDown')
 const [_, id] = window.location.pathname.split('/')
+
 likeBtn.addEventListener('click', function (e) {
   likeBlog(id)
 })

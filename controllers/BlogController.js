@@ -31,6 +31,7 @@ class BlogController {
   static writeBlog = async (req, res) => {
     res.render('CreateBlog', {
       title: 'Create Blog',
+      loggedInUserId: req.user._id,
     })
   }
 
@@ -40,7 +41,8 @@ class BlogController {
   static createBlog = async (req, res) => {
     let { title, content, tags } = req.body
     const { error } = this.validateBlog({ title, content })
-    if (error) return res.status(400).json({ error: error.details[0].message })
+    if (error)
+      return res.status(400).json({ message: error.details[0].message })
     let blog = await this.Blog.findOne({ title: title })
     if (blog)
       return res.status(400).json({

@@ -1,4 +1,6 @@
 const joi = require('joi')
+const fs = require('fs').promises
+const path = require('path')
 const passport = require('passport')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
@@ -11,7 +13,7 @@ const Like = require('./models/Like')
 const Dislike = require('./models/Dislike')
 const multer = require('multer')
 const storage = require('./utils/multerConfig')
-const isAuth = require('./utils/middlewares')
+const { isAuth } = require('./utils/middlewares')
 
 const UserController = require('./controllers/UserController')
 const BlogController = require('./controllers/BlogController')
@@ -105,5 +107,13 @@ module.exports = function (wagner) {
 
   wagner.factory('Dislike', function () {
     return Dislike
+  })
+
+  wagner.factory('fs', function () {
+    return fs
+  })
+
+  wagner.factory('path', function () {
+    return path
   })
 }

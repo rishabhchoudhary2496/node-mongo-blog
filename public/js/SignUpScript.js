@@ -13,7 +13,7 @@ const sendSignUpRequest = async (formData) => {
     if (result.status == 200) {
       window.location.href = '/login'
     } else {
-      alert(data.error)
+      alert(data.message)
       window.location.reload()
     }
   } catch (error) {

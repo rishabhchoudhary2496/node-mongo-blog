@@ -43,7 +43,8 @@ class CommentController {
     const { id } = req.params
 
     const { error } = this.validateComment({ commentText })
-    if (error) return res.status(400).json({ error: error.details[0].message })
+    if (error)
+      return res.status(400).json({ message: error.details[0].message })
 
     let comment = await this.Comment.findOne({ _id: id })
     if (!comment)

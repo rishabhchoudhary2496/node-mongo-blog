@@ -11,10 +11,12 @@ wagner.invoke(
     storage,
     validateUser,
     UserController,
-    Blog
+    Blog,
+    fs,
+    path
   ) => {
     //injecting dependencies in controller
-    UserController.setData(passport, User, validateUser, Blog)
+    UserController.setData(passport, User, validateUser, Blog, fs, path)
     router.get('/login', UserController.showLoginPage)
     router.post('/login', UserController.login)
     router.get('/logout', isAuth, UserController.logout)

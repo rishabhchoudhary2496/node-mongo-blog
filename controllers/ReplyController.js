@@ -37,7 +37,8 @@ class ReplyController {
     const { replyText, commentId } = req.body
     const { id } = req.params
     const { error } = this.validateReply({ replyText, commentId })
-    if (error) return res.status(400).json({ error: error.details[0].message })
+    if (error)
+      return res.status(400).json({ message: error.details[0].message })
 
     //find if reply user is same as logged in user if yes then only he can update
 

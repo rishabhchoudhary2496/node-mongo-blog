@@ -1,10 +1,12 @@
 window.onload = function () {
-  const readBtn = document.getElementById('readBtn')
+  const readBtns = Array.from(document.querySelectorAll('#readBtn'))
   let blogId
-  if (readBtn) {
-    readBtn.addEventListener('click', function () {
-      blogId = this.dataset.blogid
-      window.location.href = `/${blogId}`
+  if (readBtns.length > 0) {
+    readBtns.forEach(function (readBtn) {
+      readBtn.addEventListener('click', function () {
+        blogId = this.dataset.blogid
+        window.location.href = `/${blogId}`
+      })
     })
   }
 }
